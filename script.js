@@ -83,17 +83,17 @@ function getCardStyle(row) {
   const u = norm(col(row, 'entrega usado', 'entrega_usado'));
   const f = norm(col(row, 'financiacion', 'financiacion'));
   if (u === 'si') return { cls: 'card-si', color: '#10b981', label: 'ENTREGA USADO', badgeCls: 'bg-emerald-500 text-emerald-950' };
-  if (f.includes('plan')) return { cls: 'card-plan', color: '#a78bfa', label: 'CON PLAN', badgeCls: 'bg-violet-500 text-white' };
-  if (f === 'si') return { cls: 'card-plan', color: '#a78bfa', label: 'FINANCIADO', badgeCls: 'bg-violet-500 text-white' };
+  if (f.includes('plan')) return { cls: 'card-plan', color: '#3498db', label: 'CON PLAN', badgeCls: 'bg-[#3498db] text-white' };
+  if (f === 'si') return { cls: 'card-plan', color: '#3498db', label: 'FINANCIADO', badgeCls: 'bg-[#3498db] text-white' };
   if (u === 'no' || f === 'no') return { cls: 'card-no', color: '#38bdf8', label: 'SIN ENTREGA', badgeCls: 'bg-sky-800 text-sky-200' };
   return { cls: 'card-default', color: '#475569', label: 'LEAD', badgeCls: 'bg-slate-700 text-slate-300' };
 }
 
 function finBadge(val) {
   const v = norm(val);
-  if (v === 'si') return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-emerald-500 text-emerald-950 shadow-sm shadow-emerald-500/20">SI</span>`;
+  if (v === 'si') return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-[#3498db] text-white shadow-sm shadow-[#3498db]/20">SI</span>`;
   if (v === 'no') return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-slate-700 text-slate-300 shadow-sm shadow-black/20">NO</span>`;
-  if (v.includes('plan')) return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-violet-600 text-white shadow-sm shadow-violet-600/20">PLAN</span>`;
+  if (v.includes('plan')) return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-[#3498db] text-white shadow-sm shadow-[#3498db]/20">PLAN</span>`;
   if (val && val !== '—') return `<span class="px-4 py-1.5 rounded-xl text-[14px] font-black bg-slate-700 text-slate-300">${val}</span>`;
   return `<span class="text-slate-500 text-sm font-bold">—</span>`;
 }
@@ -296,7 +296,7 @@ function buildCharts() {
 
   if (chartFin) chartFin.destroy();
   const fl = Object.keys(finCounts);
-  const colors = ['rgba(167,139,250,0.8)', 'rgba(16,185,129,0.8)', 'rgba(56,189,248,0.8)', 'rgba(251,191,36,0.8)', 'rgba(248,113,113,0.8)'];
+  const colors = ['rgba(52,152,219,0.8)', 'rgba(16,185,129,0.8)', 'rgba(56,189,248,0.8)', 'rgba(251,191,36,0.8)', 'rgba(248,113,113,0.8)'];
   chartFin = new Chart(document.getElementById('chartFin'), {
     type: 'bar',
     data: {

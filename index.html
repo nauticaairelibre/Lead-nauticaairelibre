@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+  <title>Leads · Náutica Aire Libre</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0ea5e9",
+            "ocean": "#075985",
+            "background-dark": "#020617",
+          },
+          fontFamily: { "display": ["Inter", "sans-serif"] },
+        },
+      },
+    }
+  </script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="font-display bg-background-dark text-slate-100 min-h-screen flex justify-center">
+
+  <div class="w-full max-w-[430px] min-h-screen bg-background-dark relative flex flex-col overflow-hidden">
+
+    <!-- Ambient glow -->
+    <div class="fixed -top-32 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none z-0">
+    </div>
+    <div class="fixed -bottom-32 -left-32 w-96 h-96 bg-ocean/20 rounded-full blur-[120px] pointer-events-none z-0">
+    </div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 bg-background-dark/80 ios-blur px-5 pt-12 pb-3 border-b border-white/5">
+      <div class="flex justify-between items-start mb-5">
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight text-white mb-0.5">Leads</h1>
+          <p class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Náutica Aire Libre</p>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          <button id="btnRefresh" onclick="fetchData(true)"
+            class="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-[20px]" id="refreshIcon">sync</span>
+          </button>
+          <div class="flex items-center gap-1.5 px-2 py-1 glass rounded-full text-[9px] font-bold text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse"></span>
+            <span id="statusText">Live</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Summary -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="glass rounded-2xl p-4 flex flex-col justify-between" style="border-left: 4px solid #0ea5e9;">
+          <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-2">Total Leads</span>
+          <div class="flex items-end justify-between">
+            <span class="text-2xl font-black text-white leading-none" id="kpiTotal">—</span>
+            <span class="material-symbols-outlined text-sky-500/30 text-xl leading-none">group</span>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-4 flex flex-col justify-between"
+          style="background: rgba(16,185,129,0.04); border: 1px solid rgba(16,185,129,0.1); border-left: 4px solid #10b981;">
+          <span class="text-[9px] text-emerald-500/80 font-bold uppercase tracking-widest mb-2">Entregan Usado</span>
+          <div class="flex items-end justify-between">
+            <span class="text-2xl font-black text-emerald-400 leading-none" id="kpiUsado">—</span>
+            <span class="material-symbols-outlined text-emerald-500/30 text-xl leading-none">directions_boat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros (Ocultos momentáneamente) -->
+      <div class="hidden flex gap-2 pb-3">
+        <button onclick="setFilter('todos')" id="chip-todos"
+          class="chip-active flex-1 py-2 text-[11px] font-black uppercase tracking-tight rounded-xl border transition-all">Todos</button>
+        <button onclick="setFilter('si')" id="chip-si"
+          class="chip-inactive flex-1 py-2 text-[11px] font-black uppercase tracking-tight rounded-xl border transition-all">Entregan</button>
+        <button onclick="setFilter('no')" id="chip-no"
+          class="chip-inactive flex-1 py-2 text-[11px] font-black uppercase tracking-tight rounded-xl border transition-all">No
+          entregan</button>
+      </div>
+
+      <!-- Search -->
+      <div class="relative mb-3">
+        <span
+          class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xl select-none">search</span>
+        <input id="searchInput" oninput="renderCards()" type="text" placeholder="Buscar nombre o teléfono..."
+          class="w-full bg-white/5 border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 outline-none focus:border-primary/50 transition-colors" />
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="flex-1 px-4 pt-5 pb-32 overflow-y-auto space-y-3" id="cardContainer">
+      <div class="flex flex-col items-center justify-center py-20 text-slate-500">
+        <span class="material-symbols-outlined text-5xl mb-3 spinning">sync</span>
+        <p class="text-sm font-medium">Cargando leads...</p>
+      </div>
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav
+      class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-background-dark/90 ios-blur border-t border-white/5 px-8 pt-3 pb-8 flex justify-between items-center z-50">
+      <button class="flex flex-col items-center gap-1 text-primary">
+        <span class="material-symbols-outlined">group</span>
+        <span class="text-[10px] font-bold">Leads</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-slate-500" onclick="toggleCharts()">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-[10px] font-bold">Gráficos</span>
+      </button>
+      <button class="flex flex-col items-center gap-1 text-slate-500" onclick="fetchData(true)">
+        <span class="material-symbols-outlined">cloud_sync</span>
+        <span class="text-[10px] font-bold" id="nextRefresh">30s</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- CHARTS OVERLAY -->
+  <div id="chartsOverlay" class="detail-overlay">
+    <div class="detail-sheet">
+      <div class="flex justify-center pt-3 pb-2">
+        <div class="w-10 h-1 bg-white/20 rounded-full"></div>
+      </div>
+      <div class="px-5 pb-8">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-lg font-black text-white">Análisis de Leads</h2>
+          <button onclick="toggleCharts()"
+            class="w-8 h-8 glass rounded-full flex items-center justify-center text-slate-400 border border-white/10">
+            <span class="material-symbols-outlined text-lg">close</span>
+          </button>
+        </div>
+        <div class="rounded-2xl p-4 mb-4"
+          style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07)">
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Entrega de Usado</p>
+          <div style="height:180px;position:relative"><canvas id="chartUsado"></canvas></div>
+        </div>
+        <div class="rounded-2xl p-4" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07)">
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Tipo de Financiación</p>
+          <div style="height:180px;position:relative"><canvas id="chartFin"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL OVERLAY -->
+  <div id="detailOverlay" class="detail-overlay">
+    <div class="detail-sheet" id="detailSheet"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast"
+    class="fixed bottom-28 left-1/2 -translate-x-1/2 z-[200] bg-slate-800 border border-white/10 backdrop-blur-xl px-5 py-3 rounded-2xl text-sm font-semibold text-white shadow-2xl opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

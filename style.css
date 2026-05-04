@@ -1,0 +1,62 @@
+.glass { 
+  background-color: rgba(255, 255, 255, 0.05); 
+  backdrop-filter: blur(24px); 
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+  min-height: max(884px, 100dvh);
+}
+.ios-blur {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+.status-pulse { position: relative; }
+.status-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  opacity: 0.6;
+  animation: pulse-ring 2s cubic-bezier(0.455,0.03,0.515,0.955) infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+.card-si { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.18); border-left: 4px solid #10b981; }
+.card-no { background: rgba(56,189,248,0.05); border-color: rgba(56,189,248,0.18); border-left: 4px solid #38bdf8; }
+.card-plan { background: rgba(167,139,250,0.05); border-color: rgba(167,139,250,0.18); border-left: 4px solid #8bb2fa; }
+.card-default { background: rgba(148,163,184,0.04); border-color: rgba(148,163,184,0.1); border-left: 4px solid #475569; }
+.chip-active { background: #0ea5e9; color: #fff; border-color: #0ea5e9; box-shadow: 0 4px 15px rgba(14,165,233,0.3); }
+.chip-inactive { background: rgba(255,255,255,0.05); color: #94a3b8; border-color: rgba(255,255,255,0.1); }
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(2,6,23,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex; align-items: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.detail-overlay.open { opacity: 1; pointer-events: all; }
+.detail-sheet {
+  width: 100%; max-width: 430px; margin: 0 auto;
+  background: #0a0f1a;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px 24px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 24px);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32,0.72,0,1);
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.detail-overlay.open .detail-sheet { transform: translateY(0); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinning { animation: spin 0.8s linear infinite; }

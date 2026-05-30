@@ -506,12 +506,12 @@ function closeDetail() {
 
 // Generate dark-themed dynamic Chart.js analytics graphics
 function buildCharts() {
-  const activeLeads = allData.filter(r => !archivedLeads.includes(getLeadKey(r)));
+  const targetLeads = allData;
   
   const usadoCounts = { 'Sí': 0, 'No': 0, 'Otro': 0 };
   const finCounts = {};
   
-  activeLeads.forEach(r => {
+  targetLeads.forEach(r => {
     const u = norm(col(r, 'entrega usado', 'entrega_usado'));
     if (u === 'si') usadoCounts['Sí']++;
     else if (u === 'no') usadoCounts['No']++;

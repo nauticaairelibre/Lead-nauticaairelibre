@@ -582,7 +582,7 @@ function buildCharts() {
   });
 }
 
-// Reset Countdown Live Timer
+// Reset Countdown Live Timer..
 function resetCountdown() {
   clearInterval(countdownTimer);
   clearTimeout(refreshTimer);

@@ -95,8 +95,8 @@ async function fetchData(manual = false) {
   if (icon) icon.classList.add('spinning');
   
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
-    const res = await fetch(url);
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}&t=${Date.now()}`;
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error();
     const csv = await res.text();
     const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true });
@@ -582,7 +582,7 @@ function buildCharts() {
   });
 }
 
-// Reset Countdown Live Timer..
+// Reset Countdown Live Timer
 function resetCountdown() {
   clearInterval(countdownTimer);
   clearTimeout(refreshTimer);
